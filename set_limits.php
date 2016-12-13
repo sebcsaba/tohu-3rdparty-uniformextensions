@@ -22,4 +22,26 @@ checkboxes
 */
 }
 
+/**
+ * $limits: array( field_id => array( label => limit ) )
+ */
+function set_limits($formId, array $limits) {
+/*
+SELECT count( * ) FROM `j25_jsn_uniform_submission_data` WHERE `form_id` =49 AND `field_id` =1985 AND `submission_data_value` = 'Láthatatlan világ - Alus'
+
+div#1985.choices.jsn-columns-container.jsn-columns-count-one div.jsn-column-item label.radio input[name="1985"][value="Láthatatlan világ - Alus"]
+delete: <div class="jsn-column-item">
+
+div#2000.checkboxes.jsn-columns-container.jsn-columns-count-one div.jsn-column-item label.checkbox input
+<input name="2000[]" value="MTT programokban, rendezvényekben való közreműködés szervezőként" type="checkbox">
+delete <div class="jsn-column-item">
+
+dropdown
+select#2074.dropdown.jsn-input-fluid.jsn-uf-select2-dropdown.select2-offscreen option.jsn-column-item
+delete: <option class="jsn-column-item" value="Value 1">Value 1</option>
+
+jQuery("select#2074 option[value='Value 1']").remove();
+*/
+}
+
 ?>
