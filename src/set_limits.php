@@ -106,7 +106,7 @@ class UniWrapper
     public static function scaffold($formId)
     {
         $result = [
-            'require_once "'.__DIR__.'/set_limits.php";',
+            'require_once "'.__FILE__.'";',
             'ToHu\set_limits('.$formId.', [',
         ];
         foreach (self::getFields($formId) as $field) {
