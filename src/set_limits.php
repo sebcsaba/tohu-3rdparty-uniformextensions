@@ -10,7 +10,7 @@ use JFactory;
  */
 
 function help($formId) {
-    echo '<code>'.UniWrapper::scaffold($formId).'</code>';
+    echo '<pre>'.UniWrapper::scaffold($formId).'</pre>';
 }
 
 /**
@@ -74,9 +74,10 @@ class UniWrapper
     {
         $result = [
             'require_once "'.__FILE__.'";',
-            'ToHu\set_limits('.$formId.', [',
+            '\ToHu\set_limits('.$formId.', [',
         ];
         foreach (self::getFields($formId) as $field) {
+            $result [] = "\t// {$field->field_title}";
             $result [] = "\t{$field->field_id} => [".self::formatValues($field)."\t],";
         }
         $result[] = ']);';
