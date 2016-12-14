@@ -43,5 +43,3 @@ delete: <option class="jsn-column-item" value="Value 1">Value 1</option>
 jQuery("select#2074 option[value='Value 1']").remove();
 */
 }
-
-?>
