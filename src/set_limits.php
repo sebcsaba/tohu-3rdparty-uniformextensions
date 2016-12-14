@@ -10,7 +10,7 @@ use JFactory;
  */
 
 function help($formId) {
-    echo UniWrapper::scaffold($formId);
+    echo '<code>'.UniWrapper::scaffold($formId).'</code>';
 /*
 
 SELECT * FROM `j25_jsn_uniform_fields` WHERE `form_id` =49 and field_type IN ('checkboxes','choices','dropdown')
@@ -110,7 +110,7 @@ class UniWrapper
             'ToHu\set_limits('.$formId.', [',
         ];
         foreach (self::getFields($formId) as $field) {
-            $result [] = "{$field->field_id} => [".self::formatValues($field)."],";
+            $result [] = "\t{$field->field_id} => [".self::formatValues($field)."\t],";
         }
         $result[] = ']);';
         return implode(PHP_EOL, $result);
@@ -118,11 +118,11 @@ class UniWrapper
 
     private static function formatValues(UniField $field)
     {
-        $result = [];
+        $result = [PHP_EOL];
         foreach ($field->getValues() as $text) {
-            $result [] = "'" .addslashes($text)."' => 0,";
+            $result [] = "\t\t'" .addslashes($text)."' => 0,";
         }
-        return implode(PHP_EOL, $result);
+        return implode(PHP_EOL, $result) . PHP_EOL;
     }
 }
 
