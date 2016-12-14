@@ -1,1 +1,4 @@
 .idea/
+vendor/
+.env
+j25_jsn_uniform_fields.sql
