@@ -42,4 +42,39 @@ delete: <option class="jsn-column-item" value="Value 1">Value 1</option>
 
 jQuery("select#2074 option[value='Value 1']").remove();
 */
+	$remove = array();
+	$remove []= getJQueryToExec($formId, 2078, "Value 1", 'dropdown');
+	$remove []= getJQueryToExec($formId, 2076, "Choice 2", 'choices');
+	$remove []= getJQueryToExec($formId, 2077, "Checkbox 3", 'checkboxes');
+	printJQueryToSetLimits($remove);
 }
+
+function printJQueryToSetLimits(array $jqueryExecs) {
+	echo('<script>');
+	echo('jQuery(document).ready(function() {');
+	foreach ($jqueryExecs as $exec) {
+		echo($exec);
+	}
+	echo('});');
+	echo('</script>');
+}
+
+function getJQueryToExec($formId, $fieldId, $value, $fieldType) {
+	if ($fieldType == 'dropdown') {
+		$path = "div#jsn_form_$formId select#$fieldId option[value='".addslashes($value)."']";
+		return "jQuery('".addslashes($path)."').remove();";
+	}
+	else if ($fieldType == 'choices') {
+		$path = "div#jsn_form_$formId input[name='".$fieldId."'][value='".addslashes($value)."']";
+		return "jQuery('".addslashes($path)."').closest('div.jsn-column-item').remove();";
+	}
+	else if ($fieldType == 'checkboxes') {
+		$path = "div#jsn_form_$formId input[name='".$fieldId."[]'][value='".addslashes($value)."']";
+		return "jQuery('".addslashes($path)."').closest('div.jsn-column-item').remove();";
+	}
+	else {
+		return "throw 'Unknown fieldType: ".$fieldType."'";
+	}
+}
+
+?>
