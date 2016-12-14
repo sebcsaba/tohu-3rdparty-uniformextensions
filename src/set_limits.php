@@ -44,17 +44,7 @@ checkboxes
  * $limits: array( field_id => array( label => limit ) )
  */
 function set_limits($formId, array $limits) {
-	$fields = UniWrapper::getFields($formId);
-	$remove = array();
-	foreach ($limits as $fieldId => $fieldLimits) {
-		$submissionCounts = UniWrapper::getSubmissionCounts($formId, $fieldId);
-		foreach ($fieldLimits as $text => $limit) {
-			$field = $fields[$fieldId];
-			if (isset($submissionCounts[$text]) && $submissionCounts[$text]>=$limit) {
-				$remove []= getJQueryToExec($formId, $fieldId, $text, $field->field_type);
-			}
-		}
-	}
+	$remove = UniWrapper::getItemsToRemove($formId, $limits);
 	printJQueryToSetLimits($remove);
 }
 
@@ -139,6 +129,21 @@ class UniWrapper
 			->select('submission_data_value, count(*) as cnt');
 		$db->setQuery($query);
 		return $db->loadAssocList('submission_data_value');
+	}
+
+	public static function getItemsToRemove($formId, array $limits) {
+		$fields = UniWrapper::getFields($formId);
+		$remove = array();
+		foreach ($limits as $fieldId => $fieldLimits) {
+			$submissionCounts = UniWrapper::getSubmissionCounts($formId, $fieldId);
+			foreach ($fieldLimits as $text => $limit) {
+				$field = $fields[$fieldId];
+				if (isset($submissionCounts[$text]) && $submissionCounts[$text]['cnt'] >= $limit) {
+					$remove []= getJQueryToExec($formId, $fieldId, $text, $field->field_type);
+				}
+			}
+		}
+		return $remove;
 	}
 
 }
