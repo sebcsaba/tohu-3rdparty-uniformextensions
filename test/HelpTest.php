@@ -12,6 +12,11 @@ class HelpTest extends PHPUnit_Framework_TestCase
      */
     public function itShouldWork()
     {
-        UniWrapper::getFields(49);
+        $scaffold = UniWrapper::scaffold(49);
+//        echo $scaffold; return;
+        ob_start();
+        eval($scaffold);
+        $result = ob_get_clean();
+        echo $result;
     }
 }

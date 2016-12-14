@@ -10,8 +10,7 @@ use JFactory;
  */
 
 function help($formId) {
-    echo $formId;
-    $fields = UniWrapper::getFields($formId);
+    echo UniWrapper::scaffold($formId);
 /*
 
 SELECT * FROM `j25_jsn_uniform_fields` WHERE `form_id` =49 and field_type IN ('checkboxes','choices','dropdown')
@@ -85,25 +84,65 @@ function getJQueryToExec($formId, $fieldId, $value, $fieldType) {
 
 class UniWrapper
 {
+    /**
+     * @param int $formId
+     * @return UniField[]
+     */
     public static function getFields($formId)
     {
         $db = JFactory::getDBO();
         $query = $db->getQuery(true)
             ->from('#__jsn_uniform_fields')
-            ->select('field_id, field_title, field_settings')
+            ->select('field_id, field_type, field_title, field_settings')
             ->where([
                 'form_id=' . (int)$formId,
                 "field_type IN ('checkboxes','choices', 'dropdown')"
             ], "AND");
 
         $db->setQuery($query);
-        return $db->loadObjectList('', UniField::class);
+        return $db->loadObjectList('field_id', UniField::class);
+    }
+
+    public static function scaffold($formId)
+    {
+        $result = [
+            'require_once "'.__DIR__.'/set_limits.php";',
+            'ToHu\set_limits('.$formId.', [',
+        ];
+        foreach (self::getFields($formId) as $field) {
+            $result [] = "{$field->field_id} => [".self::formatValues($field)."],";
+        }
+        $result[] = ']);';
+        return implode(PHP_EOL, $result);
+    }
+
+    private static function formatValues(UniField $field)
+    {
+        $result = [];
+        foreach ($field->getValues() as $text) {
+            $result [] = "'" .addslashes($text)."' => 0,";
+        }
+        return implode(PHP_EOL, $result);
     }
 }
 
 class UniField
 {
     public $field_id;
+    public $field_type;
     public $field_title;
     public $field_settings;
+
+    public function getValues()
+    {
+        $settings = json_decode($this->field_settings, true);
+        return array_map($this->getItemText(), $settings['options']['items']);
+    }
+
+    private function getItemText()
+    {
+        return function ($item) {
+            return $item['text'];
+        };
+    }
 }

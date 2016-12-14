@@ -83,12 +83,12 @@ class FakeJoomlaDBO
 
     public function loadObject($className = 'stdClass')
     {
-        return $this->load()->fetchObject();
+        return $this->load()->fetchObject($className);
     }
 
-    public function loadObjectList($unused, $className = 'stdClass')
+    public function loadObjectList($indexField = '', $className = 'stdClass')
     {
-        return $this->load()->fetchAll(PDO::FETCH_CLASS, $className);
+        return $this->reIndex($indexField, $this->load()->fetchAll(PDO::FETCH_CLASS, $className));
     }
 
     /**
@@ -103,5 +103,18 @@ class FakeJoomlaDBO
             throw new Exception($this->pdo->errorInfo()[2]);
         }
         return $stmt;
+    }
+
+    private function reIndex($indexField, $resultSet)
+    {
+        if (!$indexField) {
+            return $resultSet;
+        }
+
+        $result = [];
+        foreach ($resultSet as $item) {
+            $result[$item->$indexField] = $item;
+        }
+        return $result;
     }
 }
