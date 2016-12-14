@@ -40,10 +40,6 @@ function getJQueryToExec($formId, $fieldId, $value, $fieldType) {
 		$path = "div#jsn_form_$formId input[name='".$fieldId."'][value='".addslashes($value)."']";
 		return "jQuery('".addslashes($path)."').closest('div.jsn-column-item').remove();";
 	}
-	else if ($fieldType == 'checkboxes') {
-		$path = "div#jsn_form_$formId input[name='".$fieldId."[]'][value='".addslashes($value)."']";
-		return "jQuery('".addslashes($path)."').closest('div.jsn-column-item').remove();";
-	}
 	else {
 		return "throw 'Unknown fieldType: ".$fieldType."'";
 	}
@@ -63,7 +59,7 @@ class UniWrapper
             ->select('field_id, field_type, field_title, field_settings')
             ->where([
                 'form_id=' . (int)$formId,
-                "field_type IN ('checkboxes','choices', 'dropdown')"
+                "field_type IN ('choices', 'dropdown')"
             ], "AND");
 
         $db->setQuery($query);
