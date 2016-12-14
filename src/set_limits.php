@@ -44,13 +44,17 @@ checkboxes
  * $limits: array( field_id => array( label => limit ) )
  */
 function set_limits($formId, array $limits) {
-/*
-SELECT count( * ) FROM `j25_jsn_uniform_submission_data` WHERE `form_id` =49 AND `field_id` =1985 AND `submission_data_value` = 'Láthatatlan világ - Alus'
-*/
+	$fields = UniWrapper::getFields($formId);
 	$remove = array();
-	$remove []= getJQueryToExec($formId, 2078, "Value 1", 'dropdown');
-	$remove []= getJQueryToExec($formId, 2076, "Choice 2", 'choices');
-	$remove []= getJQueryToExec($formId, 2077, "Checkbox 3", 'checkboxes');
+	foreach ($limits as $fieldId => $fieldLimits) {
+		$submissionCounts = UniWrapper::getSubmissionCounts($formId, $fieldId);
+		foreach ($fieldLimits as $text => $limit) {
+			$field = $fields[$fieldId];
+			if (isset($submissionCounts[$text]) && $submissionCounts[$text]>=$limit) {
+				$remove []= getJQueryToExec($formId, $fieldId, $text, $field->field_type);
+			}
+		}
+	}
 	printJQueryToSetLimits($remove);
 }
 
@@ -124,6 +128,19 @@ class UniWrapper
         }
         return implode(PHP_EOL, $result) . PHP_EOL;
     }
+
+	public static function getSubmissionCounts($formId, $fieldId) {
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true)
+			->from('#__jsn_uniform_submission_data')
+			->group('submission_data_value')
+			->where('form_id=' . (int)$formId)
+			->andWhere('field_id=' . (int)$fieldId)
+			->select('submission_data_value, count(*) as cnt');
+		$db->setQuery($query);
+		return $db->loadAssocList('submission_data_value');
+	}
+
 }
 
 class UniField
