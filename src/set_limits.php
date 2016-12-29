@@ -120,7 +120,14 @@ class UniWrapper
 				$result[$value]++;
 			}
 		}
-		return $result;
+		$response = array();
+		foreach ($result as $value => $count) {
+			$response[$value] = array(
+				'submission_data_value' => $value,
+				'cnt' => $count
+			);
+		}
+		return $response;
 	}
 
 	public static function getSubmissionCounts($formId, $fieldId, $fieldType) {
