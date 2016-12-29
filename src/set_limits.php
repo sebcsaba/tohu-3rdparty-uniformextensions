@@ -101,9 +101,28 @@ class UniWrapper
 		return $db->loadAssocList('submission_data_value');
 	}
 
+	public static function getSubmissionCountsCheckboxes($formId, $fieldId) {
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true)
+			->from('#__jsn_uniform_submission_data')
+			->where('form_id=' . (int)$formId)
+			->andWhere('field_id=' . (int)$fieldId)
+			->select('submission_data_value');
+		$db->setQuery($query);
+		$column = $db->loadColumn(0);
+		$result = array();
+		foreach ($column as $submission) {
+			$values = json_decode($submission);
+			foreach ($values as $value) {
+				$result[$value]++;
+			}
+		}
+		return $result;
+	}
+
 	public static function getSubmissionCounts($formId, $fieldId, $fieldType) {
 		if ('checkboxes' == $fieldType) {
-			return array();
+			return self::getSubmissionCountsCheckboxes($formId, $fieldId);
 		}
 		else {
 			return self::getSubmissionCountsNormal($formId, $fieldId);
