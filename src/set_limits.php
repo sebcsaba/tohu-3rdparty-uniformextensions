@@ -107,9 +107,11 @@ class UniWrapper
 		foreach ($limits as $fieldId => $fieldLimits) {
 			$submissionCounts = UniWrapper::getSubmissionCounts($formId, $fieldId);
 			foreach ($fieldLimits as $text => $limit) {
-				$field = $fields[$fieldId];
-				if (isset($submissionCounts[$text]) && $submissionCounts[$text]['cnt'] >= $limit) {
-					$remove []= getJQueryToExec($formId, $fieldId, $text, $field->field_type);
+				if ($limit > 0) {
+					$field = $fields[$fieldId];
+					if (isset($submissionCounts[$text]) && $submissionCounts[$text]['cnt'] >= $limit) {
+						$remove []= getJQueryToExec($formId, $fieldId, $text, $field->field_type);
+					}
 				}
 			}
 		}
