@@ -40,6 +40,10 @@ function getJQueryToExec($formId, $fieldId, $value, $fieldType) {
 		$path = "div#jsn_form_$formId input[name='".$fieldId."'][value='".addslashes($value)."']";
 		return "jQuery('".addslashes($path)."').closest('div.jsn-column-item').remove();";
 	}
+	else if ($fieldType == 'checkboxes') {
+		$path = "div#jsn_form_$formId input[name='".$fieldId."[]'][value='".addslashes($value)."']";
+		return "jQuery('".addslashes($path)."').closest('div.jsn-column-item').remove();";
+	}
 	else {
 		return "throw 'Unknown fieldType: ".$fieldType."'";
 	}
