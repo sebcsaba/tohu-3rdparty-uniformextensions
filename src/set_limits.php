@@ -89,7 +89,7 @@ class UniWrapper
         return implode(PHP_EOL, $result) . PHP_EOL;
     }
 
-	public static function getSubmissionCounts($formId, $fieldId) {
+	public static function getSubmissionCountsNormal($formId, $fieldId) {
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true)
 			->from('#__jsn_uniform_submission_data')
@@ -99,6 +99,10 @@ class UniWrapper
 			->select('submission_data_value, count(*) as cnt');
 		$db->setQuery($query);
 		return $db->loadAssocList('submission_data_value');
+	}
+
+	public static function getSubmissionCounts($formId, $fieldId) {
+		return self::getSubmissionCountsNormal($formId, $fieldId);
 	}
 
 	public static function getItemsToRemove($formId, array $limits) {
