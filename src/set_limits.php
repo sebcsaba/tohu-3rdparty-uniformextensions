@@ -113,6 +113,9 @@ class UniWrapper
 		$result = array();
 		foreach ($column as $submission) {
 			$values = json_decode($submission);
+			if ($values === null) {
+				$values = self::extraJsonParse($submission);
+			}
 			foreach ($values as $value) {
 				$result[$value]++;
 			}
@@ -144,6 +147,43 @@ class UniWrapper
 			}
 		}
 		return $remove;
+	}
+
+	/**
+	 * UniForm stores checkbox values not in a proper json-encoded format,
+	 * but sometimes without quotation marks like '[Checkbox 2]'
+	 */
+	public static function extraJsonParse($listOfValues) {
+		if (!preg_match('/^\[.*\]$/', $listOfValues)) {
+			return null;
+		}
+		$str = substr($listOfValues,1,strlen($listOfValues)-2);
+		$result = array();
+		while (strlen($str) > 0) {
+			if ('"' == substr($str, 0, 1)) {
+				$p = strpos($str, '"', 1);
+				if ($p === false) {
+					return null;
+				}
+				if (($p+1 < strlen($str)) && substr($str, $p+1, 1) != ',') {
+					return null;
+				}
+				$result []= substr($str, 1, $p);
+				$str = substr($str, $p+2);
+			}
+			else {
+				$p = strpos($str, ',');
+				if ($p === false) {
+					$result []= $str;
+					$str = '';
+				}
+				else {
+					$result []= substr($str, 0, $p);
+					$str = substr($str, $p+1);
+				}
+			}
+		}
+		return $result;
 	}
 
 }
