@@ -101,18 +101,23 @@ class UniWrapper
 		return $db->loadAssocList('submission_data_value');
 	}
 
-	public static function getSubmissionCounts($formId, $fieldId) {
-		return self::getSubmissionCountsNormal($formId, $fieldId);
+	public static function getSubmissionCounts($formId, $fieldId, $fieldType) {
+		if ('checkboxes' == $fieldType) {
+			return array();
+		}
+		else {
+			return self::getSubmissionCountsNormal($formId, $fieldId);
+		}
 	}
 
 	public static function getItemsToRemove($formId, array $limits) {
 		$fields = UniWrapper::getFields($formId);
 		$remove = array();
 		foreach ($limits as $fieldId => $fieldLimits) {
-			$submissionCounts = UniWrapper::getSubmissionCounts($formId, $fieldId);
+			$field = $fields[$fieldId];
+			$submissionCounts = UniWrapper::getSubmissionCounts($formId, $fieldId, $field->field_type);
 			foreach ($fieldLimits as $text => $limit) {
 				if ($limit > 0) {
-					$field = $fields[$fieldId];
 					if (isset($submissionCounts[$text]) && $submissionCounts[$text]['cnt'] >= $limit) {
 						$remove []= getJQueryToExec($formId, $fieldId, $text, $field->field_type);
 					}
