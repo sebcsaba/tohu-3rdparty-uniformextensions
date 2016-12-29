@@ -59,7 +59,7 @@ class UniWrapper
             ->select('field_id, field_type, field_title, field_settings')
             ->where([
                 'form_id=' . (int)$formId,
-                "field_type IN ('choices', 'dropdown')"
+                "field_type IN ('choices', 'dropdown', 'checkboxes')"
             ], "AND");
 
         $db->setQuery($query);
